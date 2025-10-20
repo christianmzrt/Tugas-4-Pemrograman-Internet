@@ -6,11 +6,11 @@
 ## 👤 Identitas
 | Keterangan | Detail |
 |-------------|--------|
-| **Nama** | Christian Mzrt |
-| **NIM** | 19XXXXXXXX |
+| **Nama** | Richard Christian Mozart Diazoni |
+| **NIM** | 2405551019 |
 | **Kelas** | Teknologi Informasi |
 | **Mata Kuliah** | Pemrograman Internet |
-| **Dosen Pengampu** | *(isi sesuai dosen pengampu)* |
+| **Dosen Pengampu** | Ir. I Nyoman Piarsa, ST., MT., IPM. |
 | **Tanggal** | Kamis, 09 Oktober 2025 |
 | **Repository** | [Tugas-4-Pemrograman-Internet](https://github.com/christianmzrt/Tugas-4-Pemrograman-Internet.git) |
 
