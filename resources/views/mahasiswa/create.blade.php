@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Tambah Mahasiswa</title>
 
-    {{-- Load CSS via Vite jika sudah dibuild, atau fallback ke CDN jika belum --}}
+    {{-- Load CSS dari Vite atau CDN Tailwind --}}
     @if (file_exists(public_path('build/manifest.json')))
         @vite('resources/css/app.css')
     @else
@@ -16,6 +16,7 @@
     <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
         <h1 class="text-2xl font-bold text-center mb-6 text-blue-600">Form Tambah Mahasiswa</h1>
 
+        {{-- Tampilkan pesan error validasi --}}
         @if ($errors->any())
             <ul class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
                 @foreach ($errors->all() as $error)
@@ -27,24 +28,35 @@
         <form method="POST" action="{{ route('mahasiswa.store') }}" class="space-y-4">
             @csrf
 
+            {{-- Input NIM --}}
             <div>
                 <label class="block font-medium text-gray-700">NIM</label>
                 <input type="text" name="nim" value="{{ old('nim') }}"
                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
             </div>
 
+            {{-- Input Nama --}}
             <div>
                 <label class="block font-medium text-gray-700">Nama</label>
                 <input type="text" name="nama" value="{{ old('nama') }}"
                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
             </div>
 
+            {{-- Dropdown Prodi --}}
             <div>
                 <label class="block font-medium text-gray-700">Program Studi</label>
-                <input type="text" name="prodi" value="{{ old('prodi') }}"
-                       class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                <select name="prodi_id"
+                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+                    <option value="">-- Pilih Program Studi --</option>
+                    @foreach ($prodi as $p)
+                        <option value="{{ $p->id }}" {{ old('prodi_id') == $p->id ? 'selected' : '' }}>
+                            {{ $p->nama_prodi }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
+            {{-- Tombol Simpan --}}
             <button type="submit"
                     class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition">
                 Simpan

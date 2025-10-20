@@ -2,11 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\FakultasController;
 
-// Arahkan root "/" langsung ke halaman daftar mahasiswa
-Route::get('/', function () {
-    return redirect()->route('mahasiswa.index');
-});
+// Saat buka root ("/"), langsung tampil daftar mahasiswa
+Route::get('/', [MahasiswaController::class, 'index'])->name('mahasiswa.index');
 
-// Resource route otomatis untuk semua fitur CRUD Mahasiswa
+// Resource route untuk CRUD
 Route::resource('mahasiswa', MahasiswaController::class);
+Route::resource('prodi', ProdiController::class);
+Route::resource('fakultas', FakultasController::class);
+
+Route::delete('/fakultas', [FakultasController::class, 'destroyAll'])->name('fakultas.destroyAll');
+
+ 

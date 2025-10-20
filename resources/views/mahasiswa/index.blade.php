@@ -24,8 +24,18 @@
             <p class="text-red-600 text-center font-medium mb-4">{{ session('error') }}</p>
         @endif
 
-        {{-- Tombol tambah --}}
-        <div class="flex justify-end mb-5">
+        {{-- 🔹 Tombol navigasi --}}
+        <div class="flex justify-between items-center mb-5">
+            <div class="flex gap-3">
+                <a href="{{ route('prodi.index') }}" 
+                   class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
+                    Data Prodi
+                </a>
+                <a href="{{ route('fakultas.index') }}" 
+                   class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
+                    Data Fakultas
+                </a>
+            </div>
             <a href="{{ route('mahasiswa.create') }}" 
                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
                 + Tambah Mahasiswa
@@ -50,14 +60,16 @@
                         <td class="px-4 py-3">{{ $m->id }}</td>
                         <td class="px-4 py-3">{{ $m->nim }}</td>
                         <td class="px-4 py-3">{{ $m->nama }}</td>
-                        <td class="px-4 py-3">{{ $m->prodi }}</td>
+                        {{-- ✅ tampilkan nama_prodi dari relasi --}}
+                        <td class="px-4 py-3">{{ $m->prodi->nama_prodi ?? '-' }}</td>
                         <td class="px-4 py-3 text-center">
                             <div class="flex justify-center gap-2">
                                 <a href="{{ route('mahasiswa.edit', $m->id) }}" 
                                    class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md text-sm font-medium transition">
                                    Edit
                                 </a>
-                                <form action="{{ route('mahasiswa.destroy', $m->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')" class="inline">
+                                <form action="{{ route('mahasiswa.destroy', $m->id) }}" method="POST" 
+                                      onsubmit="return confirm('Yakin ingin menghapus?')" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 

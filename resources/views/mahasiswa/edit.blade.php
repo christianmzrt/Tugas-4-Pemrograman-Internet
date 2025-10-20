@@ -52,17 +52,25 @@
                 @enderror
             </div>
 
-            {{-- Input Prodi --}}
+            {{-- Pilih Program Studi --}}
             <div>
                 <label class="block font-medium text-gray-700">Program Studi</label>
-                <input type="text" name="prodi" 
-                    value="{{ old('prodi', $mahasiswa->prodi) }}"
-                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none @error('prodi') border-red-500 @enderror">
-                @error('prodi')
+                <select name="prodi_id"
+                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none @error('prodi_id') border-red-500 @enderror">
+                    <option value="">-- Pilih Program Studi --</option>
+                    @foreach ($prodi as $p)
+                        <option value="{{ $p->id }}" 
+                            {{ old('prodi_id', $mahasiswa->prodi_id) == $p->id ? 'selected' : '' }}>
+                            {{ $p->nama_prodi }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('prodi_id')
                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
+            {{-- Tombol Update --}}
             <button type="submit"
                 class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition">
                 Update

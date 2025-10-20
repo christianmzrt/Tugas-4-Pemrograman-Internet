@@ -7,24 +7,25 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasi (membuat tabel mahasiswa)
      */
-    public function up()
-{
-    Schema::create('mahasiswa', function (Blueprint $table) {
-        $table->id();
-        $table->string('nim', 20)->unique();
-        $table->string('nama', 100);
-        $table->string('prodi', 100);
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('mahasiswa', function (Blueprint $table) {
+            $table->id();
+            $table->string('nim', 20)->unique();
+            $table->string('nama', 100);
+            // Ganti kolom 'prodi' lama dengan relasi ke tabel 'prodi'
+            $table->foreignId('prodi_id')->constrained('prodi')->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
 
     /**
-     * Reverse the migrations.
+     * Batalkan migrasi (hapus tabel mahasiswa)
      */
     public function down(): void
     {
-        Schema::dropIfExists('mahasiswas');
+        Schema::dropIfExists('mahasiswa');
     }
 };
