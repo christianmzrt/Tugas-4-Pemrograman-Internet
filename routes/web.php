@@ -11,4 +11,5 @@ Route::get('/', [MahasiswaController::class, 'index'])->name('mahasiswa.index');
 // Resource route untuk CRUD
 Route::resource('mahasiswa', MahasiswaController::class);
 Route::resource('prodi', ProdiController::class);
-Route::resource('fakultas', FakultasController::class);
+Route::resource('fakultas', FakultasController::class) //karena sebelumnya error "fakulta", dan dikasi solusi seperti ini
+    ->parameters(['fakultas' => 'fakultas']);

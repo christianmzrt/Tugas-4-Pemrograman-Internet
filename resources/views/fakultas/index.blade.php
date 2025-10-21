@@ -2,87 +2,170 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <title>Data Fakultas</title>
-
-    {{-- Aman dari error vite --}}
-    @if (file_exists(public_path('build/manifest.json')))
-        @vite('resources/css/app.css')
-    @else
-        <script src="https://cdn.tailwindcss.com"></script>
-    @endif
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daftar Fakultas</title>
+    
+    {{-- Bootstrap 5 CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {{-- Bootstrap Icons --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col items-center py-10">
+<body>
 
-    <div class="w-full max-w-5xl bg-white shadow-lg rounded-xl p-8">
-        <h2 class="text-3xl font-bold text-center text-blue-700 mb-6">🎓 Daftar Fakultas</h2>
-
-        {{-- Pesan sukses & error --}}
-        @if(session('success'))
-            <div class="bg-green-100 text-green-800 border border-green-300 px-4 py-2 rounded mb-4 text-center font-medium">
-                {{ session('success') }}
+    {{-- Navbar --}}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url('/') }}">
+                <i class="bi bi-mortarboard-fill me-2"></i>
+                Sistem Akademik
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/') }}">
+                            <i class="bi bi-people-fill me-1"></i>
+                            Mahasiswa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('/prodi') }}">
+                            <i class="bi bi-journal-bookmark-fill me-1"></i>
+                            Program Studi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url('/fakultas') }}">
+                            <i class="bi bi-building me-1"></i>
+                            Fakultas
+                        </a>
+                    </li>
+                </ul>
             </div>
-        @endif
-        @if(session('error'))
-            <div class="bg-red-100 text-red-800 border border-red-300 px-4 py-2 rounded mb-4 text-center font-medium">
-                {{ session('error') }}
-            </div>
-        @endif
+        </div>
+    </nav>
 
-        {{-- Tombol tambah --}}
-        <div class="flex justify-end mb-5">
-            <a href="{{ route('fakultas.create') }}" 
-               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition">
-                + Tambah Fakultas
+    {{-- Main Content --}}
+    <div class="container mt-4 mb-5">
+        
+        {{-- Page Header --}}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">
+                <i class="bi bi-building text-primary me-2"></i>
+                Daftar Fakultas
+            </h2>
+            <a href="{{ route('fakultas.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>
+                Tambah Fakultas
             </a>
         </div>
 
-        {{-- Tabel data fakultas --}}
-        <div class="overflow-x-auto">
-            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
-                <thead class="bg-blue-100 text-blue-800">
-                    <tr>
-                        <th class="px-4 py-3 text-left font-semibold">No</th>
-                        <th class="px-4 py-3 text-left font-semibold">Kode Fakultas</th>
-                        <th class="px-4 py-3 text-left font-semibold">Nama Fakultas</th>
-                        <th class="px-4 py-3 text-center font-semibold">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @forelse($fakultas as $index => $f)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3">{{ $index + 1 }}</td>
-                            <td class="px-4 py-3">{{ $f->kode_fakultas }}</td>
-                            <td class="px-4 py-3">{{ $f->nama_fakultas }}</td>
-                            <td class="px-4 py-3 text-center">
-                                <div class="flex justify-center gap-2">
-                                    <a href="{{ route('fakultas.edit', $f->id) }}" 
-                                       class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md text-sm font-medium transition">
-                                       ✏️ Edit
-                                    </a>
+        {{-- Alert Success --}}
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
-                                    <form action="{{ route('fakultas.destroy', $f->id) }}" 
-                                          method="POST" 
-                                          onsubmit="return confirm('Yakin mau hapus fakultas ini?')" 
-                                          class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm font-medium transition">
-                                            🗑️ Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center py-4 text-gray-500">Belum ada data fakultas.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        {{-- Alert Error --}}
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        {{-- Table Card --}}
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-3" style="width: 60px;">No</th>
+                                <th class="px-4 py-3">Kode Fakultas</th>
+                                <th class="px-4 py-3">Nama Fakultas</th>
+                                <th class="px-4 py-3 text-center" style="width: 180px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($fakultas as $index => $f)
+                            <tr>
+                                <td class="px-4 py-3">{{ $index + 1 }}</td>
+                                <td class="px-4 py-3">
+                                    <span class="badge bg-secondary">{{ $f->kode_fakultas }}</span>
+                                </td>
+                                <td class="px-4 py-3 fw-medium">{{ $f->nama_fakultas }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        <a href="{{ route('fakultas.edit', $f->id) }}" 
+                                           class="btn btn-warning btn-sm">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <form action="{{ route('fakultas.destroy', $f->id) }}" 
+                                              method="POST" 
+                                              class="d-inline"
+                                              onsubmit="return confirm('Yakin ingin menghapus fakultas ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                    Belum ada data fakultas
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+
+        {{-- Info Footer --}}
+        <div class="mt-3 text-muted small">
+            <i class="bi bi-info-circle me-1"></i>
+            Total: <strong>{{ $fakultas->count() }}</strong> fakultas
+        </div>
+
     </div>
 
+    {{-- Bootstrap 5 JS Bundle --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 </html>
