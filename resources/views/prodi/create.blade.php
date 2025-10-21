@@ -2,71 +2,176 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tambah Program Studi</title>
-
-    {{-- Aman dari error vite --}}
-    @if (file_exists(public_path('build/manifest.json')))
-        @vite('resources/css/app.css')
-    @else
-        <script src="https://cdn.tailwindcss.com"></script>
-    @endif
+    
+    {{-- Bootstrap 5 CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {{-- Bootstrap Icons --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 40px 0;
+        }
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 2px solid #e9ecef;
+            padding: 1.25rem;
+        }
+        .form-label {
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col items-center py-10">
+<body>
 
-    <div class="w-full max-w-lg bg-white shadow-lg rounded-xl p-8">
-        <h2 class="text-3xl font-bold text-center text-blue-700 mb-6">Tambah Program Studi</h2>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                
+                {{-- Card Form --}}
+                <div class="card">
+                    
+                    {{-- Header --}}
+                    <div class="card-header">
+                        <h4 class="mb-0 text-dark">
+                            <i class="bi bi-journal-plus me-2"></i>
+                            Tambah Program Studi
+                        </h4>
+                    </div>
 
-        {{-- Pesan sukses/error --}}
-        @if(session('success'))
-            <p class="text-green-600 text-center font-medium mb-4">{{ session('success') }}</p>
-        @endif
-        @if(session('error'))
-            <p class="text-red-600 text-center font-medium mb-4">{{ session('error') }}</p>
-        @endif
+                    {{-- Body --}}
+                    <div class="card-body p-4">
+                        
+                        {{-- Alert Success --}}
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="bi bi-check-circle me-2"></i>
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
 
-        {{-- Form tambah prodi --}}
-        <form action="{{ route('prodi.store') }}" method="POST" class="space-y-5">
-            @csrf
+                        {{-- Alert Error --}}
+                        @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
 
-            <div>
-                <label for="kode_prodi" class="block font-semibold text-gray-700 mb-2">Kode Prodi</label>
-                <input type="text" name="kode_prodi" id="kode_prodi"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                       required>
+                        {{-- Form --}}
+                        <form action="{{ route('prodi.store') }}" method="POST">
+                            @csrf
+
+                            {{-- Input Kode Prodi --}}
+                            <div class="mb-3">
+                                <label for="kode_prodi" class="form-label">
+                                    Kode Program Studi
+                                </label>
+                                <input 
+                                    type="text" 
+                                    name="kode_prodi" 
+                                    id="kode_prodi" 
+                                    class="form-control @error('kode_prodi') is-invalid @enderror" 
+                                    placeholder="Contoh: TI, SI, TE"
+                                    value="{{ old('kode_prodi') }}"
+                                    required
+                                >
+                                @error('kode_prodi')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            {{-- Input Nama Prodi --}}
+                            <div class="mb-3">
+                                <label for="nama_prodi" class="form-label">
+                                    Nama Program Studi
+                                </label>
+                                <input 
+                                    type="text" 
+                                    name="nama_prodi" 
+                                    id="nama_prodi" 
+                                    class="form-control @error('nama_prodi') is-invalid @enderror" 
+                                    placeholder="Contoh: Teknik Informatika"
+                                    value="{{ old('nama_prodi') }}"
+                                    required
+                                >
+                                @error('nama_prodi')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            {{-- Select Fakultas --}}
+                            <div class="mb-4">
+                                <label for="fakultas_id" class="form-label">
+                                    Fakultas
+                                </label>
+                                <select 
+                                    name="fakultas_id" 
+                                    id="fakultas_id" 
+                                    class="form-select @error('fakultas_id') is-invalid @enderror"
+                                    required
+                                >
+                                    <option value="">-- Pilih Fakultas --</option>
+                                    @foreach($fakultas as $f)
+                                        <option value="{{ $f->id }}" {{ old('fakultas_id') == $f->id ? 'selected' : '' }}>
+                                            {{ $f->nama_fakultas }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('fakultas_id')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            {{-- Buttons --}}
+                            <div class="d-flex justify-content-between align-items-center pt-3">
+                                <a href="{{ route('prodi.index') }}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i>
+                                    Kembali
+                                </a>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-1"></i>
+                                    Simpan
+                                </button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+
             </div>
-
-            <div>
-                <label for="nama_prodi" class="block font-semibold text-gray-700 mb-2">Nama Prodi</label>
-                <input type="text" name="nama_prodi" id="nama_prodi"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                       required>
-            </div>
-
-            <div>
-                <label for="fakultas_id" class="block font-semibold text-gray-700 mb-2">Fakultas</label>
-                <select name="fakultas_id" id="fakultas_id"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required>
-                    <option value="">-- Pilih Fakultas --</option>
-                    @foreach($fakultas as $f)
-                        <option value="{{ $f->id }}">{{ $f->nama_fakultas }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="flex justify-between items-center pt-4">
-                <a href="{{ route('prodi.index') }}"
-                   class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
-                    ← Kembali
-                </a>
-
-                <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition duration-150 ease-in-out">
-                    Simpan
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 
+    {{-- Bootstrap 5 JS Bundle --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 </html>

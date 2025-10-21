@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <title>Edit Data Prodi</title>
+    <title>Edit Fakultas</title>
 
     {{-- Aman dari error vite --}}
     @if (file_exists(public_path('build/manifest.json')))
@@ -11,57 +11,56 @@
         <script src="https://cdn.tailwindcss.com"></script>
     @endif
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col items-center py-10">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
 
-    <div class="w-full max-w-lg bg-white shadow-lg rounded-xl p-8">
-        <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">Edit Data Program Studi</h1>
+    <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-6 text-blue-600">Edit Data Fakultas</h1>
 
-        {{-- Pesan sukses/error --}}
-        @if(session('success'))
-            <p class="text-green-600 text-center font-medium mb-4">{{ session('success') }}</p>
+        {{-- Tampilkan error validasi --}}
+        @if ($errors->any())
+            <ul class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         @endif
-        @if(session('error'))
-            <p class="text-red-600 text-center font-medium mb-4">{{ session('error') }}</p>
-        @endif
 
-        {{-- Form edit prodi --}}
-        <form action="{{ route('prodi.update', $prodi->id) }}" method="POST" class="space-y-5">
+        {{-- Form Update --}}
+        <form action="{{ route('fakultas.update', $fakultas) }}" method="POST" class="space-y-5">
             @csrf
             @method('PUT')
 
+            {{-- Input Kode Fakultas --}}
             <div>
-                <label for="nama_prodi" class="block font-semibold text-gray-700 mb-2">Nama Prodi</label>
-                <input type="text" name="nama_prodi" id="nama_prodi"
-                       value="{{ old('nama_prodi', $prodi->nama_prodi) }}"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                       required>
+                <label for="kode_fakultas" class="block font-medium text-gray-700">Kode Fakultas</label>
+                <input type="text" name="kode_fakultas" id="kode_fakultas"
+                    value="{{ old('kode_fakultas', $fakultas->kode_fakultas) }}"
+                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none @error('kode_fakultas') border-red-500 @enderror">
+                @error('kode_fakultas')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
+            {{-- Input Nama Fakultas --}}
             <div>
-                <label for="fakultas_id" class="block font-semibold text-gray-700 mb-2">Fakultas</label>
-                <select name="fakultas_id" id="fakultas_id"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required>
-                    @foreach ($fakultas as $f)
-                        <option value="{{ $f->id }}" {{ $prodi->fakultas_id == $f->id ? 'selected' : '' }}>
-                            {{ $f->nama_fakultas }}
-                        </option>
-                    @endforeach
-                </select>
+                <label for="nama_fakultas" class="block font-medium text-gray-700">Nama Fakultas</label>
+                <input type="text" name="nama_fakultas" id="nama_fakultas"
+                    value="{{ old('nama_fakultas', $fakultas->nama_fakultas) }}"
+                    class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none @error('nama_fakultas') border-red-500 @enderror">
+                @error('nama_fakultas')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
-            <div class="flex justify-between items-center pt-4">
-                <a href="{{ route('prodi.index') }}"
-                   class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
-                    ← Batal
-                </a>
-
-                <button type="submit"
-                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg shadow transition duration-150 ease-in-out">
-                    Simpan Perubahan
-                </button>
-            </div>
+            <button type="submit"
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition">
+                Update
+            </button>
         </form>
+
+        <div class="text-center mt-4">
+            <a href="{{ route('fakultas.index') }}" class="text-blue-500 hover:underline">← Kembali</a>
+        </div>
     </div>
 
 </body>

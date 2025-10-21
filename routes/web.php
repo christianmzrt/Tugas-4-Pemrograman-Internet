@@ -12,7 +12,3 @@ Route::get('/', [MahasiswaController::class, 'index'])->name('mahasiswa.index');
 Route::resource('mahasiswa', MahasiswaController::class);
 Route::resource('prodi', ProdiController::class);
 Route::resource('fakultas', FakultasController::class);
-
-Route::delete('/fakultas', [FakultasController::class, 'destroyAll'])->name('fakultas.destroyAll');
-
- 

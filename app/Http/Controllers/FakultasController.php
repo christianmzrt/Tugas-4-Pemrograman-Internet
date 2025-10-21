@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Fakultas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class FakultasController extends Controller
 {
@@ -48,28 +47,30 @@ class FakultasController extends Controller
         return redirect()->route('fakultas.index')->with('success', 'Fakultas berhasil diperbarui.');
     }
 
-    public function destroy(Fakultas $fakultas)
-    {
-        $fakultas->delete();
-
-        // Reset auto increment kalau tabel kosong
-        if (Fakultas::count() === 0) {
-            DB::statement('ALTER TABLE fakultas AUTO_INCREMENT = 1');
-        }
-
-        return redirect()->route('fakultas.index')->with('success', 'Fakultas berhasil dihapus.');
-    }
-
-    // 🧹 Tambahan baru: hapus semua data fakultas sekaligus
-    public function destroyAll()
+    public function destroy($id)
     {
         try {
-            Fakultas::truncate(); // hapus semua data + reset auto increment otomatis
+            // Cari fakultas berdasarkan ID
+            $fakultas = Fakultas::findOrFail($id);
+            
+            // Cek apakah fakultas punya relasi dengan prodi
+            if ($fakultas->prodi()->count() > 0) {
+                return redirect()->route('fakultas.index')
+                    ->with('error', 'Tidak bisa hapus! Fakultas ini masih memiliki ' . $fakultas->prodi()->count() . ' prodi.');
+            }
+            
+            // Hapus fakultas
+            $fakultas->delete();
+            
             return redirect()->route('fakultas.index')
-                ->with('success', 'Semua data fakultas berhasil dihapus dan ID direset!');
+                ->with('success', 'Fakultas berhasil dihapus.');
+                
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('fakultas.index')
+                ->with('error', 'Data fakultas tidak ditemukan.');
         } catch (\Exception $e) {
             return redirect()->route('fakultas.index')
-                ->with('error', 'Terjadi kesalahan saat menghapus semua data.');
+                ->with('error', 'Gagal menghapus fakultas: ' . $e->getMessage());
         }
     }
 }

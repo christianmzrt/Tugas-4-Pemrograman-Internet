@@ -28,25 +28,12 @@
             </div>
         @endif
 
-        {{-- Tombol tambah & hapus semua --}}
-        <div class="flex justify-between items-center mb-5">
+        {{-- Tombol tambah --}}
+        <div class="flex justify-end mb-5">
             <a href="{{ route('fakultas.create') }}" 
                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition">
                 + Tambah Fakultas
             </a>
-
-            {{-- Tombol hapus semua fakultas --}}
-            @if($fakultas->count() > 0)
-                <form action="{{ route('fakultas.destroyAll') }}" method="POST" 
-                      onsubmit="return confirm('Yakin ingin menghapus SEMUA data fakultas?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" 
-                            class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition">
-                        🗑 Hapus Semua
-                    </button>
-                </form>
-            @endif
         </div>
 
         {{-- Tabel data fakultas --}}
@@ -54,16 +41,16 @@
             <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
                 <thead class="bg-blue-100 text-blue-800">
                     <tr>
-                        <th class="px-4 py-3 text-left font-semibold">ID</th>
+                        <th class="px-4 py-3 text-left font-semibold">No</th>
                         <th class="px-4 py-3 text-left font-semibold">Kode Fakultas</th>
                         <th class="px-4 py-3 text-left font-semibold">Nama Fakultas</th>
                         <th class="px-4 py-3 text-center font-semibold">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @forelse($fakultas as $f)
+                    @forelse($fakultas as $index => $f)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3">{{ $f->id }}</td>
+                            <td class="px-4 py-3">{{ $index + 1 }}</td>
                             <td class="px-4 py-3">{{ $f->kode_fakultas }}</td>
                             <td class="px-4 py-3">{{ $f->nama_fakultas }}</td>
                             <td class="px-4 py-3 text-center">
@@ -81,7 +68,7 @@
                                         @method('DELETE')
                                         <button type="submit" 
                                                 class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm font-medium transition">
-                                            Hapus
+                                            🗑️ Hapus
                                         </button>
                                     </form>
                                 </div>

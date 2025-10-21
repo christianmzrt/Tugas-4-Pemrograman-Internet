@@ -34,7 +34,7 @@
             <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden">
                 <thead class="bg-blue-600 text-white">
                     <tr>
-                        <th class="px-4 py-2 text-left">ID</th>
+                        <th class="px-4 py-2 text-left">No</th>
                         <th class="px-4 py-2 text-left">Kode Prodi</th>
                         <th class="px-4 py-2 text-left">Nama Prodi</th>
                         <th class="px-4 py-2 text-left">Fakultas</th>
@@ -42,9 +42,9 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @forelse($prodi as $p)
+                    @forelse($prodi as $index => $p)
                         <tr class="hover:bg-gray-100 transition">
-                            <td class="px-4 py-2">{{ $p->id }}</td>
+                            <td class="px-4 py-2">{{ $index + 1 }}</td>
                             <td class="px-4 py-2">{{ $p->kode_prodi }}</td>
                             <td class="px-4 py-2">{{ $p->nama_prodi }}</td>
                             <td class="px-4 py-2">{{ $p->fakultas->nama_fakultas ?? '-' }}</td>
