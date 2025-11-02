@@ -15,11 +15,21 @@ class FakultasController extends Controller
 
     public function create()
     {
+        // PROTEKSI: Hanya admin yang bisa akses
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
         return view('fakultas.create');
     }
 
     public function store(Request $request)
     {
+        // PROTEKSI: Hanya admin yang bisa tambah data
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses untuk menambah data.');
+        }
+
         $request->validate([
             'kode_fakultas' => 'required|unique:fakultas,kode_fakultas',
             'nama_fakultas' => 'required'
@@ -32,11 +42,21 @@ class FakultasController extends Controller
 
     public function edit(Fakultas $fakultas)
     {
+        // PROTEKSI: Hanya admin yang bisa akses
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
         return view('fakultas.edit', compact('fakultas'));
     }
 
     public function update(Request $request, Fakultas $fakultas)
     {
+        // PROTEKSI: Hanya admin yang bisa update data
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses untuk mengubah data.');
+        }
+
         $request->validate([
             'kode_fakultas' => 'required|unique:fakultas,kode_fakultas,' . $fakultas->id,
             'nama_fakultas' => 'required'
@@ -47,30 +67,14 @@ class FakultasController extends Controller
         return redirect()->route('fakultas.index')->with('success', 'Fakultas berhasil diperbarui.');
     }
 
-    public function destroy($id)
+    public function destroy(Fakultas $fakultas)
     {
-        try {
-            // Cari fakultas berdasarkan ID
-            $fakultas = Fakultas::findOrFail($id);
-            
-            // Cek apakah fakultas punya relasi dengan prodi
-            if ($fakultas->prodi()->count() > 0) {
-                return redirect()->route('fakultas.index')
-                    ->with('error', 'Tidak bisa hapus! Fakultas ini masih memiliki ' . $fakultas->prodi()->count() . ' prodi.');
-            }
-            
-            // Hapus fakultas
-            $fakultas->delete();
-            
-            return redirect()->route('fakultas.index')
-                ->with('success', 'Fakultas berhasil dihapus.');
-                
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->route('fakultas.index')
-                ->with('error', 'Data fakultas tidak ditemukan.');
-        } catch (\Exception $e) {
-            return redirect()->route('fakultas.index')
-                ->with('error', 'Gagal menghapus fakultas: ' . $e->getMessage());
+        // PROTEKSI: Hanya admin yang bisa hapus data
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses untuk menghapus data.');
         }
+
+        $fakultas->delete();
+        return redirect()->route('fakultas.index')->with('success', 'Fakultas berhasil dihapus.');
     }
 }

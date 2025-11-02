@@ -35,6 +35,10 @@
             padding: 0.375rem 0.75rem;
             font-size: 0.875rem;
         }
+        .role-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -52,23 +56,54 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url('/') }}">
+                        <a class="nav-link active" href="{{ route('mahasiswa.index') }}">
                             <i class="bi bi-people-fill me-1"></i>
                             Mahasiswa
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/prodi') }}">
+                        <a class="nav-link" href="{{ route('prodi.index') }}">
                             <i class="bi bi-journal-bookmark-fill me-1"></i>
                             Program Studi
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/fakultas') }}">
+                        <a class="nav-link" href="{{ route('fakultas.index') }}">
                             <i class="bi bi-building me-1"></i>
                             Fakultas
                         </a>
                     </li>
+                    
+                    {{-- Menu User yang Login --}}
+                    @auth
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i>
+                            {{ Auth::user()->name }}
+                            <span class="badge bg-warning text-dark role-badge ms-1">
+                                {{ Auth::user()->role }}
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    <i class="bi bi-person-gear me-2"></i>
+                                    Edit Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right me-2"></i>
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                    @endauth
                 </ul>
             </div>
         </div>
@@ -83,10 +118,14 @@
                 <i class="bi bi-people-fill text-primary me-2"></i>
                 Daftar Mahasiswa
             </h2>
-            <a href="{{ route('mahasiswa.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>
-                Tambah Mahasiswa
-            </a>
+            
+            {{-- Tombol Tambah hanya untuk Admin --}}
+            @if(Auth::check() && Auth::user()->isAdmin())
+                <a href="{{ route('mahasiswa.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Tambah Mahasiswa
+                </a>
+            @endif
         </div>
 
         {{-- Alert Success --}}
@@ -107,6 +146,23 @@
             </div>
         @endif
 
+        {{-- Info Role User --}}
+        @auth
+            @if(Auth::user()->isAdmin())
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="bi bi-shield-check me-2"></i>
+                    Anda login sebagai <strong>Admin</strong>. Anda dapat mengelola semua data (Tambah, Edit, Hapus).
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @else
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-eye me-2"></i>
+                    Anda login sebagai <strong>User</strong>. Anda hanya dapat melihat data.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+        @endauth
+
         {{-- Table Card --}}
         <div class="card">
             <div class="card-body p-0">
@@ -118,7 +174,11 @@
                                 <th class="px-4 py-3">NIM</th>
                                 <th class="px-4 py-3">Nama Mahasiswa</th>
                                 <th class="px-4 py-3">Program Studi</th>
-                                <th class="px-4 py-3 text-center" style="width: 180px;">Aksi</th>
+                                
+                                {{-- Kolom Aksi hanya muncul jika Admin --}}
+                                @if(Auth::check() && Auth::user()->isAdmin())
+                                    <th class="px-4 py-3 text-center" style="width: 180px;">Aksi</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -133,28 +193,36 @@
                                     <i class="bi bi-journal-bookmark text-primary me-1"></i>
                                     {{ $m->prodi->nama_prodi ?? '-' }}
                                 </td>
+                                
+                                {{-- Tombol Aksi hanya untuk Admin --}}
+                                @if(Auth::check() && Auth::user()->isAdmin())
                                 <td class="px-4 py-3 text-center">
                                     <div class="d-flex gap-1 justify-content-center">
                                         <a href="{{ route('mahasiswa.edit', $m->id) }}" 
-                                           class="btn btn-warning btn-sm">
+                                           class="btn btn-warning btn-sm"
+                                           title="Edit">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <form action="{{ route('mahasiswa.destroy', $m->id) }}" 
                                               method="POST" 
                                               class="d-inline"
-                                              onsubmit="return confirm('Yakin ingin menghapus mahasiswa ini?')">
+                                              onsubmit="return confirm('Yakin ingin menghapus mahasiswa {{ $m->nama }}?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
+                                            <button type="submit" 
+                                                    class="btn btn-danger btn-sm"
+                                                    title="Hapus">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5 text-muted">
+                                <td colspan="{{ Auth::check() && Auth::user()->isAdmin() ? '5' : '4' }}" 
+                                    class="text-center py-5 text-muted">
                                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                     Belum ada data mahasiswa
                                 </td>

@@ -18,6 +18,11 @@ class MahasiswaController extends Controller
     // Form tambah data
     public function create()
     {
+        // PROTEKSI: Hanya admin yang bisa akses
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
         $prodi = Prodi::orderBy('nama_prodi')->get();
         return view('mahasiswa.create', compact('prodi'));
     }
@@ -25,6 +30,11 @@ class MahasiswaController extends Controller
     // Simpan data baru
     public function store(Request $request)
     {
+        // PROTEKSI: Hanya admin yang bisa tambah data
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses untuk menambah data.');
+        }
+
         $request->validate([
             'nim' => 'required|min:4|unique:mahasiswa,nim',
             'nama' => 'required',
@@ -50,6 +60,11 @@ class MahasiswaController extends Controller
     // Form edit data
     public function edit(Mahasiswa $mahasiswa)
     {
+        // PROTEKSI: Hanya admin yang bisa akses
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
         $prodi = Prodi::orderBy('nama_prodi')->get();
         return view('mahasiswa.edit', compact('mahasiswa', 'prodi'));
     }
@@ -57,6 +72,11 @@ class MahasiswaController extends Controller
     // Update data
     public function update(Request $request, Mahasiswa $mahasiswa)
     {
+        // PROTEKSI: Hanya admin yang bisa update data
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses untuk mengubah data.');
+        }
+
         $request->validate([
             'nim' => 'required|min:4|unique:mahasiswa,nim,' . $mahasiswa->id,
             'nama' => 'required',
@@ -82,6 +102,11 @@ class MahasiswaController extends Controller
     // Hapus data
     public function destroy($id)
     {
+        // PROTEKSI: Hanya admin yang bisa hapus data
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Anda tidak memiliki akses untuk menghapus data.');
+        }
+
         try {
             $mahasiswa = Mahasiswa::findOrFail($id);
             $mahasiswa->delete();
